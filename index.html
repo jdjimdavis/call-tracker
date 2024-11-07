@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Call Back Tracker</title>
+  <link href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css" rel="stylesheet">
+  <script defer src="script.js"></script> <!-- Link to the external JS file -->
+</head>
+<body>
+  <nav class="container-fluid">
+    <ul>
+      <li><strong>Call Back Tracker</strong></li>
+    </ul>
+    <ul>
+      <li><a href="#">Home</a></li>
+      <li><a href="#">Unanswered Calls</a></li>
+      <li><a href="#" role="button">Log Out</a></li>
+    </ul>
+  </nav>
+
+  <main class="container">
+    <div class="grid">
+      <section>
+        <hgroup>
+          <h2>Unanswered Calls</h2>
+          <h3>List of callers waiting for a response</h3>
+        </hgroup>
+        <p>This table will display the list of calls that haven’t been responded to, pulled from the Google Sheet.</p>
+
+        <figure>
+          <img src="https://source.unsplash.com/random/800x400/?call" alt="Phone Call">
+          <figcaption><a href="https://unsplash.com" target="_blank">Image from Unsplash</a></figcaption>
+        </figure>
+
+        <h3>Caller Information</h3>
+        <p>The following details will be populated from your Google Sheet:</p>
+        
+        <table role="grid">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Caller Info</th>
+              <th>Message</th>
+              <th>Client Phone</th>
+              <th>Intake Person</th>
+              <th>Returned Call?</th>
+              <th>Notes</th>
+              <th>Assigned Case?</th>
+              <th>Assigned To</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Rows will be dynamically generated here from Google Sheets -->
+          </tbody>
+        </table>
+      </section>
+    </div>
+  </main>
+
+  <footer class="container">
+    <small><a href="#">Privacy Policy</a> • <a href="#">Terms of Service</a></small>
+  </footer>
+</body>
+</html>
