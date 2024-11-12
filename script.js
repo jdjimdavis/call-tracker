@@ -20,7 +20,7 @@ async function fetchGoogleSheetData() {
   }
 }
 
-// Function to display the data in the table
+// Function to display the data in the table and make certain fields editable
 function displayData(rows) {
   const tableBody = document.querySelector('tbody');
   tableBody.innerHTML = '';  // Clear any previous content
@@ -29,25 +29,79 @@ function displayData(rows) {
   rows.slice(1).forEach((row, index) => {
     const tr = document.createElement('tr');
     
-    row.forEach(cell => {
+    // Date, Time, Caller Info, Message, Client Phone (non-editable)
+    for (let i = 0; i < 5; i++) {
       const td = document.createElement('td');
-      td.textContent = cell;
+      td.textContent = row[i];  // Display the data
       tr.appendChild(td);
-    });
-    
-    // Add a textarea in the "Notes" column
-    const notesTd = document.createElement('td');
-    const notesTextarea = document.createElement('textarea');
-    notesTextarea.placeholder = "Add notes here...";
-    notesTextarea.value = notesData[index] || '';  // Pre-fill if there's existing data
-    notesTextarea.addEventListener('input', (event) => {
-      notesData[index] = event.target.value;  // Store the input value
-    });
-    notesTd.appendChild(notesTextarea);
-    tr.appendChild(notesTd);
+    }
+
+    // Editable fields: Intake Person, Returned Call?, Assigned Case?, Assigned To
+    for (let i = 5; i < 9; i++) {
+      const td = document.createElement('td');
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.value = row[i] || '';  // Pre-fill with existing data or leave empty
+      input.dataset.rowIndex = index;  // Store row index for saving later
+      input.dataset.colIndex = i;  // Store column index for saving later
+      td.appendChild(input);
+      tr.appendChild(td);
+    }
+
+    // Add a "Save" button to save the row changes
+    const saveTd = document.createElement('td');
+    const saveButton = document.createElement('button');
+    saveButton.textContent = 'Save';
+    saveButton.dataset.rowIndex = index;  // Store row index for saving
+    saveButton.addEventListener('click', saveRowData);  // Add event listener for saving
+    saveTd.appendChild(saveButton);
+    tr.appendChild(saveTd);
 
     tableBody.appendChild(tr);
   });
+}
+
+// Function to save changes to the row in Google Sheets
+async function saveRowData(event) {
+  const rowIndex = event.target.dataset.rowIndex;  // Get the row index from the button's data attribute
+
+  // Get the row inputs for this row
+  const rowInputs = document.querySelectorAll(`input[data-row-index="${rowIndex}"]`);
+  const updatedData = Array.from(rowInputs).map(input => input.value);  // Collect input values
+
+  console.log('Saving data for row:', rowIndex, updatedData);
+
+  // Send the updated data back to Google Sheets
+  await updateGoogleSheet(rowIndex, updatedData);
+}
+
+// Function to update a specific row in Google Sheets
+async function updateGoogleSheet(rowIndex, updatedData) {
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Sheet1!A${parseInt(rowIndex) + 2}:J${parseInt(rowIndex) + 2}?valueInputOption=USER_ENTERED&key=${API_KEY}`;
+
+  const body = {
+    range: `Sheet1!A${parseInt(rowIndex) + 2}:J${parseInt(rowIndex) + 2}`,
+    majorDimension: 'ROWS',
+    values: [updatedData]
+  };
+
+  try {
+    const response = await fetch(url, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+
+    if (response.ok) {
+      console.log('Row successfully updated in Google Sheets!');
+      alert('Row successfully updated!');
+    } else {
+      console.error('Failed to update the row:', await response.text());
+      alert('Failed to update the row.');
+    }
+  } catch (error) {
+    console.error('Error updating row:', error);
+  }
 }
 
 // Helper function to parse dates in the mm/dd/yyyy format
