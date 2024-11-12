@@ -3,6 +3,10 @@ const API_KEY = 'AIzaSyDBNQLwWOGsFE5Dlu2cTw-dojeUMQYsel4';  // Replace with your
 const SHEET_ID = '1mOToU4dHHLwUx1i9BbahH497EwGU4HRDG7za8hT2j2A';  // Your Google Sheet ID
 const RANGE = 'Sheet1!A:J';  // The range covering all the columns (A to J)
 
+console.log('Script is running');
+
+// Function to fetch data from Google Sheets (rest of your code)
+
 // Object to store notes by call row
 let notesData = {};
 
