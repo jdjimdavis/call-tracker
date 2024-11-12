@@ -163,9 +163,16 @@ document.querySelector('#filterButton').addEventListener('click', async () => {
   const rows = await fetchGoogleSheetData();  // Fetch the data first
   applyDateFilter(rows);  // Apply the filter and display data
 });
-
-// Initial call to fetch and display data when the page loads
-document.addEventListener('DOMContentLoaded', async () => {
-  const rows = await fetchGoogleSheetData();
-  displayData(rows);  // Display the data without filtering initially
+document.addEventListener('DOMContentLoaded', () => {
+  // Only run this code after the DOM has fully loaded
+  const filterButton = document.querySelector('#filterButton');
+  
+  if (filterButton) {
+    filterButton.addEventListener('click', async () => {
+      const rows = await fetchGoogleSheetData();
+      applyDateFilter(rows);
+    });
+  } else {
+    console.error('Filter button not found!');
+  }
 });
